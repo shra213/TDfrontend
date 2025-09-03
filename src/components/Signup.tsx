@@ -24,16 +24,6 @@ const Signup: React.FC = () => {
     }));
   };
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePic(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0]) return;
     const file = e.target.files[0];
@@ -87,7 +77,6 @@ const Signup: React.FC = () => {
         JSON.stringify({
           email: formData.email,
           name: formData.name,
-          prf: profilePic,
         })
       );
 
