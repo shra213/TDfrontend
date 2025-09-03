@@ -1,0 +1,14 @@
+/* This MUST be at the very top */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css');
+@import "tailwindcss";
+
+/* Default font for whole page */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Special gamified font */
+.font-game {
+  font-family: 'Press Start 2P', cursive;
+}
