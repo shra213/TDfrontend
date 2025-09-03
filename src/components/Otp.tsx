@@ -75,7 +75,7 @@ const Otp: React.FC = () => {
     setIsError(false);
 
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}/api/otp/verifyOtp`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/otp/verifyOtp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email, otp: otpValue, name: name }),
@@ -118,7 +118,7 @@ const Otp: React.FC = () => {
     setIsError(false);
 
     try {
-      await fetch(`${import.meta.env.BASE_URL}/api/otp/resend`, {
+      await fetch(`${import.meta.env.VITE_BASE_URL}/api/otp/resend`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email }),
