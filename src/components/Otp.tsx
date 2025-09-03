@@ -14,6 +14,7 @@ const Otp: React.FC = () => {
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
+  const [prf, setPrf] = useState();
   console.log(attemptCount);
   const navigate = useNavigate();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -21,9 +22,12 @@ const Otp: React.FC = () => {
   useEffect(() => {
     const verificationEmail = localStorage.getItem("verificationEmail");
     const veriName = localStorage.getItem("name");
+    const prf = localStorage.getItem("prf");
     if (verificationEmail) {
       setEmail(verificationEmail);
       setName(veriName || "");
+      //@ts-ignore
+      setPrf(prf);
     } else {
       navigate("/signup");
     }
@@ -78,16 +82,15 @@ const Otp: React.FC = () => {
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/otp/verifyOtp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email, otp: otpValue, name: name }),
+        body: JSON.stringify({ email: email, otp: otpValue, name: name, publicId: prf }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         setMessage("Email verified successfully! Redirecting...");
         localStorage.removeItem("verificationEmail");
         setTimeout(() => navigate("/login"), 1000);
       } else {
+
         setAttemptCount((prev) => {
           const next = prev + 1;
           if (next >= 5) {

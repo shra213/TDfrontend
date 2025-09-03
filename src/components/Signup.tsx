@@ -34,7 +34,29 @@ const Signup: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files[0]) return;
+    const file = e.target.files[0];
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
+      // Upload to backend (Multer)
+
+      const uploadRes = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const uploadData = await uploadRes.json();
+      const fileUrl = uploadData.fileUrl;
+      localStorage.setItem("publicId", uploadData.publicId);
+      localStorage.setItem("prf", fileUrl);
+      console.log(fileUrl);
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+  }
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -65,7 +87,7 @@ const Signup: React.FC = () => {
         JSON.stringify({
           email: formData.email,
           name: formData.name,
-          profilePic,
+          prf: profilePic,
         })
       );
 
@@ -82,7 +104,6 @@ const Signup: React.FC = () => {
           email: formData.email,
           password: formData.password,
           name: formData.name,
-          profilePic,
         }),
       });
 
@@ -161,7 +182,7 @@ const Signup: React.FC = () => {
             <input
               type="file"
               accept="image/*"
-              onChange={handleImageChange}
+              onChange={handleFileChange}
               className="hidden"
             />
             <motion.div

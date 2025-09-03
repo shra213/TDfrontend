@@ -87,7 +87,7 @@ export default function Navbar() {
                     {/* Profile Image */}
                     <Link to="/profile">
                         <img
-                            src={`${import.meta.env.VITE_BASE_URL}${localStorage.getItem("prf")}` || ''}
+                            src={`${localStorage.getItem("prf")}` || ''}
                             alt="Profile"
                             className="sm:w-10 sm:h-10 h-6 w-6 rounded-full border-2 border-pink-500 shadow-sm"
                         />

@@ -70,7 +70,7 @@ export default function RoomChat({ roomId, onBack }: { roomId: any, onBack?: () 
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="relative z-10 w-full max-w-lg md:max-w-2xl h-[90vh] md:h-[80vh] mx-auto flex flex-col rounded-3xl bg-black/50 backdrop-blur-md shadow-2xl overflow-hidden"
+            className="relative z-10 w-full max-w-sm md:max-w-2xl h-[90vh] md:h-[80vh] mx-auto flex flex-col rounded-3xl bg-black/50 backdrop-blur-md shadow-2xl overflow-hidden"
         >
             {/* Header */}
             <div className="flex items-center gap-3 p-4 border-b border-white/20 bg-black/60">
@@ -117,7 +117,7 @@ export default function RoomChat({ roomId, onBack }: { roomId: any, onBack?: () 
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Type a message..."
-                    className="max-w-[11rem] sm:w-full flex-1 px-2 py-1 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-pink-500"
+                    className="sm:w-full flex-1 px-2 py-1 rounded-sm bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-pink-500"
                     onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 />
                 <motion.button

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Paperclip,Send, ArrowLeft } from "lucide-react";
+import { Paperclip, Send, ArrowLeft } from "lucide-react";
 import {
     doc,
     collection,
@@ -100,7 +100,7 @@ export default function ChatCard({ friend, onBack }: any) {
                 </button>
 
                 <img
-                    src="https://i.pravatar.cc/100"
+                    src={friend.mediaUrl}
                     alt="profile"
                     className="w-12 h-12 rounded-full border-2 border-pink-500"
                 />

@@ -70,7 +70,7 @@ export default function UserList({
                             <div className="flex items-center gap-4 flex-1">
                                 {user.mediaUrl ? (
                                     <img
-                                        src={`${import.meta.env.VITE_BASE_URL}${user.mediaUrl}` || "https://i.prmediaUrl.cc/100"}
+                                        src={`${user.mediaUrl}`}
                                         className="w-12 h-12 rounded-full border border-pink-500/30 object-cover"
                                     />
                                 ) : (
@@ -78,6 +78,7 @@ export default function UserList({
                                         {user.name[0]}
                                     </div>
                                 )}
+
                                 <div className="flex flex-col">
                                     <span className="font-semibold text-white">{user.name}</span>
                                     {friends && (

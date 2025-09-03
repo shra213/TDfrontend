@@ -143,7 +143,7 @@ export default function ProfileSection() {
             {/* Profile Picture */}
             <div className="flex flex-col items-center">
                 <img
-                    src={`${import.meta.env.VITE_BASE_URL}${user.mediaUrl}` || "https://randomuser.me/api/portraits/women/44.jpg"}
+                    src={`${user.mediaUrl}` || "https://randomuser.me/api/portraits/women/44.jpg"}
                     alt="Profile"
                     className="w-40 h-40 sm:w-60 sm:h-60 rounded-full border-4 border-pink-500/40 shadow-lg object-cover"
                 />

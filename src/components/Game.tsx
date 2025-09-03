@@ -340,7 +340,7 @@ export default function GamePage() {
                             onClick={() => setShowSidebar(true)}
                         >
                             <img
-                                src={`${import.meta.env.VITE_BASE_URL}${localStorage.getItem("prf")}`}
+                                src={`${localStorage.getItem("prf")}`}
                                 alt="Profile"
                                 className="w-7 h-7 md:w-10 md:h-10 rounded-full border border-pink-500 shadow-md"
                             />
@@ -372,7 +372,7 @@ export default function GamePage() {
                                 }}
                             >
                                 <img
-                                    src={`${import.meta.env.VITE_BASE_URL}${localStorage.getItem("prf")}`}
+                                    src={`${localStorage.getItem("prf")}`}
                                     alt="Profile"
                                     className="w-12 h-12 rounded-full border border-pink-500 shadow-md"
                                 />
