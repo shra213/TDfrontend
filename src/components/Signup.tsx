@@ -10,6 +10,7 @@ const Signup: React.FC = () => {
     password: "",
     name: "",
   });
+  const [profilePic, setProfilePic] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
@@ -22,6 +23,7 @@ const Signup: React.FC = () => {
       [name]: value,
     }));
   };
+
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0]) return;
@@ -39,6 +41,7 @@ const Signup: React.FC = () => {
       const uploadData = await uploadRes.json();
       const fileUrl = uploadData.fileUrl;
       localStorage.setItem("publicId", uploadData.publicId);
+      setProfilePic(fileUrl);
       localStorage.setItem("prf", fileUrl);
       console.log(fileUrl);
     } catch (e) {
@@ -76,6 +79,7 @@ const Signup: React.FC = () => {
         JSON.stringify({
           email: formData.email,
           name: formData.name,
+          prf: profilePic,
         })
       );
 
@@ -177,9 +181,9 @@ const Signup: React.FC = () => {
               whileHover={{ scale: 1.05, rotate: 3 }}
               className="w-28 h-28 rounded-full overflow-hidden border-4 border-white/20 flex items-center justify-center bg-white/10 group-hover:border-pink-500 transition"
             >
-              {localStorage.getItem("prf") ? (
+              {profilePic ? (
                 <img
-                  src={`${localStorage.getItem("prf")}`}
+                  src={profilePic}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
