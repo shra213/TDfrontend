@@ -75,7 +75,7 @@ const Signup: React.FC = () => {
       setIsError(false);
 
       // Send OTP request
-      await fetch(`${import.meta.env.BASE_URL}/api/otp/sendOtp`, {
+      await fetch(`${import.meta.env.VITE_BASE_URL}/api/otp/sendOtp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
