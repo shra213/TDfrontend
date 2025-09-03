@@ -10,7 +10,6 @@ const Signup: React.FC = () => {
     password: "",
     name: "",
   });
-  const [profilePic, setProfilePic] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
@@ -178,9 +177,9 @@ const Signup: React.FC = () => {
               whileHover={{ scale: 1.05, rotate: 3 }}
               className="w-28 h-28 rounded-full overflow-hidden border-4 border-white/20 flex items-center justify-center bg-white/10 group-hover:border-pink-500 transition"
             >
-              {profilePic ? (
+              {localStorage.getItem("prf") ? (
                 <img
-                  src={profilePic}
+                  src={`${localStorage.getItem("prf")}`}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
