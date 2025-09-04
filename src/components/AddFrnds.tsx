@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, } from "../firebaseconfig";
 import UserList from "./Userlist";
-
+import { UserPlus, CheckCircle, Clock, Users } from "lucide-react";
 const apiUrl = import.meta.env.VITE_API_URL;
 console.log(apiUrl);
 
@@ -76,7 +76,7 @@ export default function AddFrnds() {
         console.log("Friend request sent to", userId);
         // You can call your backend endpoint to send a friend request here
         await sendFriendRequest(userId);
-
+        await fetchUsers();
     };
 
     return (
@@ -92,10 +92,27 @@ export default function AddFrnds() {
                         className={`px-4 py-2 rounded-lg text-black 
                         ${isDisabled ? "bg-gray-400 cursor-not-allowed" : "bg-pink-500 hover:bg-pink-600"}`}
                     >
-                        {user.status === "no_relation" && "Send Request"}
-                        {user.status === "request_sent" && "Request Sent"}
-                        {user.status === "request_received" && "Pending"}
-                        {user.status === "friends" && "Friends"}
+                        <div>
+                            {/* Send Request */}
+                            <div className="flex items-center gap-2">
+                                {/* Desktop / larger screens => text */}
+                                <span className="hidden sm:block">
+                                    {user.status === "no_relation" && "Send Request"}
+                                    {user.status === "request_sent" && "Request Sent"}
+                                    {user.status === "request_received" && "Pending"}
+                                    {user.status === "friends" && "Friends"}
+                                </span>
+
+                                {/* Mobile / small screens => icons */}
+                                <span className="sm:hidden">
+                                    {user.status === "no_relation" && <UserPlus size={20} />}
+                                    {user.status === "request_sent" && <CheckCircle size={20} />}
+                                    {user.status === "request_received" && <Clock size={20} />}
+                                    {user.status === "friends" && <Users size={20} />}
+                                </span>
+                            </div>
+                        </div>
+
                     </button>
                 );
             }}

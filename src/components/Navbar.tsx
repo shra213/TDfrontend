@@ -1,21 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-// import { onSnapshot, collection, query } from "firebase/firestore";
-// import { db, auth } from "../firebaseconfig";
-// import { Bell } from "lucide-react";
-
-// interface Notification {
-//     id: string;
-//     read: boolean;
-//     [key: string]: any;
-// }
-
+import { MessageCircle } from "lucide-react";
+import { db, auth } from "../firebaseconfig";
+import { doc, onSnapshot } from "firebase/firestore";
 export default function Navbar() {
     const location = useLocation();
     const [activeTab, setActiveTab] = useState(location.pathname);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    // const [notifications, setNotifications] = useState<Notification[]>([]);
-
+    const [notifications, setNotifications] = useState();
+    const [mediaUrl, setMediaUrl] = useState();
     const navItems = [
         { name: "Home", path: "/front" },
         { name: "Friends", path: "/friends" },
@@ -24,9 +17,25 @@ export default function Navbar() {
         { name: "Create Room", path: "/create-room" },
         { name: "Join Room", path: "/rooms" }
     ];
+    useEffect(() => {
+        if (!auth.currentUser) return;
 
+        const userRef = doc(db, "users", auth.currentUser.uid);
+
+        // Listen to user document changes
+        const unsubscribe = onSnapshot(userRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setMediaUrl(data.mediaUrl || "");
+                setNotifications(data.totalUnread || 0); // assume unreadMessages field
+            }
+        });
+
+        return () => unsubscribe(); // cleanup on unmount
+    }, []);
     // Update active tab on route change
     useEffect(() => {
+
         setActiveTab(location.pathname);
         setSidebarOpen(false); // close sidebar on navigation
     }, [location]);
@@ -83,11 +92,18 @@ export default function Navbar() {
 
                 {/* Notification & Profile Icons */}
                 <div className="flex items-center gap-4 ml-3">
+                    {notifications ? <button className="relative text-white hover:text-pink-500">
+                        <MessageCircle className="w-6 h-6" />
 
+                        {/* Unread messages badge */}
+                        <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 bg-green-500 text-xs font-bold text-white rounded-full">
+                            {notifications}
+                        </span>
+                    </button>:""}
                     {/* Profile Image */}
                     <Link to="/profile">
                         <img
-                            src={`${localStorage.getItem("prf")}` || ''}
+                            src={`${mediaUrl}` || ''}
                             alt="Profile"
                             className="sm:w-10 sm:h-10 h-6 w-6 rounded-full border-2 border-pink-500 shadow-sm"
                         />

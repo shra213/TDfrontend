@@ -180,15 +180,26 @@ export const handleEndGame = async (
 };
 
 // 🔹 End Turn
-export const handleEndTurn = async (roomId: string) => {
+export const handleEndTurn = async (roomId: string, publicId?: string) => {
     if (!roomId) return;
     const roomRef = doc(db, "rooms", roomId);
+    if (publicId) {
+        fetch(`${import.meta.env.VITE_BASE_URL}/delete-file`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ publicId: publicId }),
+        })
+            .then((res) => res.json())
+            .then((data) => console.log("File deleted:", data))
+            .catch((err) => console.error("Failed to delete file:", err));
+    }
     await updateDoc(roomRef, {
         choice: "",
         question: "",
         answer: "",
         asker: "",
         answerer: "",
+        publicId: "",
         gameStatus: "spinning",
         clicked: false,
         spinState: { rotation: 0, spinSpeed: 0, friction: 0, minSpeed: 0, startedBy: null, startedAt: null }
@@ -201,7 +212,8 @@ export const handleExitGame = async (
     roomData: any,
     currentUid: string,
     addRoomNotificationFn: (msg: string, type?: string) => Promise<void>,
-    navigate: any
+    navigate: any,
+    publicId?: string,
 ) => {
     if (!roomId) return;
     const roomRef = doc(db, "rooms", roomId);
@@ -216,7 +228,7 @@ export const handleExitGame = async (
         if (res.ok) {
             navigate("/front");
             if (roomData?.asker?.id === currentUid || roomData?.answerer?.id === currentUid)
-                await handleEndTurn(roomId);
+                await handleEndTurn(roomId, publicId);
 
             if (roomData.lastAnswerer.id === currentUid)
                 await updateDoc(roomRef, { lastAnswerer: "anyone" });
@@ -259,7 +271,7 @@ export const handleSubmitAnswer = async (
         }
 
         let mediaUrl = "";
-
+        let publicId = "";
         if (mediaFile) {
             // ✅ Create FormData to send file
             const formData = new FormData();
@@ -276,7 +288,8 @@ export const handleSubmitAnswer = async (
             }
 
             const result = await response.json();
-            mediaUrl = result.fileUrl; // e.g., "/uploads/16932321312.png"
+            mediaUrl = result.fileUrl;
+            publicId = result.publicId // e.g., "/uploads/16932321312.png"
         }
 
         // @ts-ignore
@@ -285,7 +298,8 @@ export const handleSubmitAnswer = async (
             answer: answer,
             media: mediaUrl ? [mediaUrl] : [],
             answeredAt: new Date(),
-            gameStatus: "answerPending"
+            gameStatus: "answerPending",
+            publicId: publicId
         });
 
         // ✅ Reset state after submission

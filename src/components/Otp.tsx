@@ -84,19 +84,36 @@ const Otp: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email, otp: otpValue, name: name, publicId: prf }),
       });
+
       const data = await response.json();
+
       if (response.ok) {
         setMessage("Email verified successfully! Redirecting...");
         localStorage.removeItem("verificationEmail");
         setTimeout(() => navigate("/login"), 1000);
       } else {
+        console.log(response);
 
         setAttemptCount((prev) => {
           const next = prev + 1;
-          if (next >= 5) {
+
+          if (next >= 2) {
             setMessage("Too many failed attempts. Please sign up again.");
             setIsError(true);
             localStorage.removeItem("verificationEmail");
+
+            // DELETE file from Cloudinary if verification failed
+            if (localStorage.getItem("publicId")) {
+              fetch(`${import.meta.env.VITE_BASE_URL}/delete-file`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ publicId: localStorage.getItem("publicId") }),
+              })
+                .then((res) => res.json())
+                .then((data) => console.log("File deleted:", data))
+                .catch((err) => console.error("Failed to delete file:", err));
+            }
+
             setTimeout(() => navigate("/signup"), 2000);
           } else {
             setMessage(data.message || "Invalid code. Try again.");
@@ -104,6 +121,7 @@ const Otp: React.FC = () => {
             setOtp(["", "", "", "", "", ""]);
             inputRefs.current[0]?.focus();
           }
+
           return next;
         });
       }
@@ -114,6 +132,7 @@ const Otp: React.FC = () => {
       setIsLoading(false);
     }
   };
+
 
   const handleResendOtp = async () => {
     setIsLoading(true);
@@ -162,7 +181,7 @@ const Otp: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center text-white">
+    <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center text-white px-4 sm:px-6">
       {/* Neon Background */}
       <motion.div
         className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-900 to-black"
@@ -170,6 +189,7 @@ const Otp: React.FC = () => {
         transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
         style={{ backgroundSize: "400% 400%" }}
       />
+
       {/* Neon Orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {bubbles.map(({ id, size, startX, duration, delay }) => (
@@ -192,41 +212,40 @@ const Otp: React.FC = () => {
 
       {/* Card */}
       <motion.div
-        className="relative z-10 bg-black/40 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md"
+        className="relative z-10 bg-black/40 backdrop-blur-lg p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md"
         initial={{ y: 100, opacity: 0, scale: 0.9 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
         transition={{ type: "spring", stiffness: 80, damping: 12 }}
       >
         {/* Icon */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-4 sm:mb-6">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 120 }}
-            className="p-4 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 shadow-lg"
+            className="p-3 sm:p-4 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 shadow-lg"
           >
-            <Mail size={28} className="text-white" />
+            <Mail size={24} className="sm:w-[28px] sm:h-[28px] text-white" />
           </motion.div>
         </div>
 
         {/* Title */}
         <h1
-          className="text-3xl font-extrabold text-center mb-2"
+          className="text-2xl sm:text-3xl font-extrabold text-center mb-2"
           style={{
-            textShadow:
-              "0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff",
+            textShadow: "0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff",
           }}
         >
           Verify Your Email
         </h1>
-        <p className="text-center text-slate-300 mb-6">
+        <p className="text-center text-slate-300 text-sm sm:text-base mb-6 px-2">
           We've sent a 6-digit code to{" "}
-          <span className="text-pink-400">{email}</span>
+          <span className="text-pink-400 break-words">{email}</span>
         </p>
 
         {/* OTP Inputs */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex justify-center gap-3 mb-6">
+          <div className="flex justify-center gap-1 sm:gap-3 mb-6">
             {otp.map((digit, i) => (
               <motion.input
                 key={i}
@@ -244,7 +263,7 @@ const Otp: React.FC = () => {
                   borderColor: "#ff00ff",
                   boxShadow: "0 0 12px #ff00ff",
                 }}
-                className="w-12 h-12 text-center text-xl font-bold rounded-lg bg-black/30 border border-pink-500/50 text-pink-400 focus:outline-none"
+                className="w-10 h-10 sm:w-12 sm:h-12 text-center text-lg sm:text-xl font-bold rounded-lg bg-black/30 border border-pink-500/50 text-pink-400 focus:outline-none"
                 inputMode="numeric"
                 pattern="[0-9]"
               />
@@ -253,7 +272,7 @@ const Otp: React.FC = () => {
 
           {message && (
             <div
-              className={`p-3 rounded-lg text-sm text-center ${isError
+              className={`p-2 sm:p-3 rounded-lg text-xs sm:text-sm text-center ${isError
                 ? "bg-red-500/20 text-red-300 border border-red-500/40"
                 : "bg-green-500/20 text-green-300 border border-green-500/40"
                 }`}
@@ -267,12 +286,12 @@ const Otp: React.FC = () => {
             disabled={isLoading}
             whileHover={{ scale: 1.05, boxShadow: "0 0 20px #ff00ff" }}
             whileTap={{ scale: 0.97 }}
-            className="w-full py-3 rounded-lg bg-gradient-to-r from-pink-500 to-rose-500 shadow-lg font-semibold disabled:opacity-50"
+            className="w-full py-3 sm:py-3.5 rounded-lg bg-gradient-to-r from-pink-500 to-rose-500 shadow-lg font-semibold text-sm sm:text-base disabled:opacity-50"
           >
             {isLoading ? "Verifying..." : "Verify Email"}
           </motion.button>
 
-          <div className="text-center mt-4 text-sm text-slate-300">
+          <div className="text-center mt-4 text-xs sm:text-sm text-slate-300">
             Didn’t receive the code?{" "}
             {canResend ? (
               <button
@@ -291,19 +310,15 @@ const Otp: React.FC = () => {
           <div className="text-center mt-2">
             <Link
               to="/login"
-              className="text-sm text-slate-400 hover:underline"
+              className="text-xs sm:text-sm text-slate-400 hover:underline"
             >
               Back to Login
             </Link>
           </div>
         </form>
-
-        <div className="mt-6 p-3 bg-white/5 rounded-lg border border-white/10 text-center text-sm text-slate-300">
-          <strong>Demo:</strong> Use code{" "}
-          <code className="font-bold text-pink-400">123456</code> to verify
-        </div>
       </motion.div>
     </div>
+
   );
 };
 

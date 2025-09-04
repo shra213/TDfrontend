@@ -41,7 +41,8 @@ const Signup: React.FC = () => {
       const uploadData = await uploadRes.json();
       const fileUrl = uploadData.fileUrl;
       localStorage.setItem("publicId", uploadData.publicId);
-      setProfilePic(fileUrl);
+      //@ts-ignore
+      setProfilePic(URL.createObjectURL(file));
       localStorage.setItem("prf", fileUrl);
       console.log(fileUrl);
     } catch (e) {
@@ -73,7 +74,7 @@ const Signup: React.FC = () => {
       // Save locally for OTP flow
       localStorage.setItem("verificationEmail", formData.email);
       localStorage.setItem("name", formData.name);
-
+      console.log(profilePic);
       localStorage.setItem(
         "pendingSignup",
         JSON.stringify({

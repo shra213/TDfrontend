@@ -4,8 +4,8 @@ import { auth } from "../firebaseconfig";
 interface User {
     name: string;
     email: string;
+    birthdate: string;
     mediaUrl?: string;
-    birthDate: string;
 }
 
 const url = import.meta.env.VITE_API_URL;
@@ -50,6 +50,7 @@ export default function ProfileSection() {
     }, []);
 
     const handleEdit = (field: keyof User) => {
+        console.log("Editing field set to:", field); // Debug
         if (!user) return;
         setEditingField(field);
         setEditValue(user[field] || "");
@@ -91,11 +92,15 @@ export default function ProfileSection() {
             formData.append("file", file);
 
             // Upload to backend (Multer)
+            console.log("what happened");
+            console.log(`${url}/upload`);
             const uploadRes = await fetch(`${url}/upload`, {
                 method: "POST",
                 body: formData,
             });
+            console.log("dontknow");
             const uploadData = await uploadRes.json();
+            console.log(uploadData);
             const fileUrl = uploadData.fileUrl;
 
             // Update profile picture URL in DB
@@ -139,7 +144,7 @@ export default function ProfileSection() {
     if (!user) return <p className="text-white">No profile found</p>;
 
     return (
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-10 p-6">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-10 py-6 px-2">
             {/* Profile Picture */}
             <div className="flex flex-col items-center">
                 <img
@@ -207,19 +212,30 @@ export default function ProfileSection() {
                             </button>
                         </div>
                     ) : (
-                        <span
-                            className="text-lg cursor-pointer hover:underline"
-                            onClick={() => handleEdit("email")}
-                        >
-                            {user.email}
-                        </span>
+                        <div className="flex flex-col">
+                            <span
+                                onClick={() => handleEdit("email")}
+                                className="text-lg text-white cursor-pointer"
+                            >
+                                {user.email.length > 20 ? (
+                                    <>
+                                        {user.email.slice(0, 20)}
+                                        <br />
+                                        {user.email.slice(20)}
+                                    </>
+                                ) : (
+                                    user.email
+                                )}
+                            </span>
+                        </div>
+
                     )}
                 </div>
 
                 {/* Birthdate */}
                 <div>
                     <span className="block text-sm text-gray-400">Birthdate</span>
-                    {editingField === "birthDate" ? (
+                    {editingField === "birthdate" ? (
                         <div className="flex gap-2">
                             <input
                                 type="date"
@@ -237,15 +253,15 @@ export default function ProfileSection() {
                     ) : (
                         <span
                             className="text-lg cursor-pointer hover:underline"
-                            onClick={() => handleEdit("birthDate")}
+                            onClick={() => handleEdit("birthdate")}
                         >
-                            {user.birthDate}
+                            {user.birthdate ? user.birthdate : `21 / 9 / 2005`}
                         </span>
                     )}
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-4 mt-6">
+                <div className="hidden md:block flex gap-4 mt-6">
                     <button
                         onClick={handleLogout}
                         className="px-4 py-2 bg-blue-500 rounded hover:bg-blue-600 text-white"
@@ -254,6 +270,6 @@ export default function ProfileSection() {
                     </button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

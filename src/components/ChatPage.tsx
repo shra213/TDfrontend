@@ -76,6 +76,10 @@ export default function ChatCard({ friend, onBack }: any) {
                 lastMsg: newMessage,
                 lastMsgTime: serverTimestamp(),
             });
+            const userDocRef = doc(db, "users", friend.id);
+            await updateDoc(userDocRef, {
+                totalUnread: increment(1),
+            });
             setNewMessage(""); // clear input
         } catch (err) {
             console.error("Error sending message:", err);
@@ -99,11 +103,16 @@ export default function ChatCard({ friend, onBack }: any) {
                     <ArrowLeft size={22} />
                 </button>
 
-                <img
-                    src={friend.mediaUrl}
-                    alt="profile"
-                    className="w-12 h-12 rounded-full border-2 border-pink-500"
-                />
+                {friend.mediaUrl ? (
+                    <img
+                        src={`${friend.mediaUrl}`}
+                        className="w-12 h-12 rounded-full border border-pink-500/30 object-cover"
+                    />
+                ) : (
+                    <div className="w-12 h-12 flex justify-center items-center font-bold text-xl rounded-full border border-pink-500/30">
+                        {friend.name[0]}
+                    </div>
+                )}
                 <div>
                     <h3 className="text-sm font-semibold text-white">{friend?.name}</h3>
                     <p className="text-sm text-slate-400">Online</p>

@@ -3,20 +3,34 @@
 //
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { db } from "../firebaseconfig";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebaseconfig";
+import { collection, getDocs } from "firebase/firestore";
 export default function TruthOrDareBackgroundPage() {
   const bottlePng = "Beerbottle.png"; // Replace with your PNG path
   const navigate = useNavigate();
+  const [totalUsers, setTotal] = useState(0);
+
   useEffect(() => {
     const user = auth.currentUser?.uid;
     if (user) {
+
       const timer = setTimeout(() => {
         navigate("/front");
       }, 500); // half a second delay
 
       return () => clearTimeout(timer);
     }
+    async function getUserCount() {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      console.log("Total users:", querySnapshot.size);
+      setTotal(querySnapshot.size);
+      return querySnapshot.size;
+    }
+
+    getUserCount();
   }, []);
 
   return (
@@ -57,7 +71,7 @@ export default function TruthOrDareBackgroundPage() {
         {Array.from({ length: 25 }).map((_, i) => {
           const size = Math.random() * 30 + 15; // bubble size 15-45px
           const startX = Math.random() * 100; // start position %
-          const duration = Math.random() * 10 + 6; // 6-16s to rise
+          const duration = Math.random() * 8 + 4; // 6-16s to rise
           const delay = Math.random() * 5; // random delay
 
           return (
@@ -92,71 +106,79 @@ export default function TruthOrDareBackgroundPage() {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/70 mix-blend-multiply" />
 
       {/* Content area */}
-      <div className="relative z-10 container mx-auto px-10 py-12 flex flex-col md:flex-row items-center justify-center gap-8">
+      <div className="relative z-10 md:mt-10 container mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-center gap:5 md:gap-8">
         {/* Left: Title & CTA */}
-        <div className="flex-1 max-w-xl">
+        <div className="flex-1 max-w-xl text-center md:text-left">
           <motion.h1
-            className="text-5xl md:text-7xl font-extrabold leading-tight drop-shadow-2xl 
-             bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 
-             bg-clip-text text-transparent opacity-80"
+            className="text-3xl sm:text-4xl md:text-7xl font-extrabold leading-tight drop-shadow-2xl 
+        bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 
+        bg-clip-text text-transparent opacity-80"
             initial={{ y: -20, opacity: 0 }}
             animate={{
               y: 0,
               opacity: 0.8,
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
             }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "linear",
-            }}
+            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
             style={{ backgroundSize: "200% 200%" }}
           >
             Truth & Dare
           </motion.h1>
 
           <motion.p
-            className="mt-4 text-lg md:text-xl text-slate-100/80 max-w-lg"
+            className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl text-slate-100/80 max-w-lg mx-auto md:mx-0"
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.9, delay: 0.15 }}
           >
-            Spin the bottle, pick a prompt, and let the game begin. Play with
-            friends — on phone or big screen.
+            Spin the bottle. Choose truth or dare. Let the fun begin!
           </motion.p>
+          <motion.div
+            className="relative z-200 hidden md:flex justify-start mt-4 text-slate-400/70 text-xl"
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.15 }}
+          >
+            {`👥 ${totalUsers}+ players online now`}
+          </motion.div>
+
+
+
 
           <motion.div
-            className="mt-8 flex gap-4"
+            className="mt-4 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center md:justify-start"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <button onClick={() => {
-              navigate("/signup");
-            }} className="px-6 py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 shadow-xl transform hover:-translate-y-0.5 active:scale-95">
+            <button
+              onClick={() => navigate("/signup")}
+              className="px-5 sm:px-6 py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 shadow-xl transform hover:-translate-y-0.5 active:scale-95 w-full sm:w-auto"
+            >
               Signup
             </button>
-            <button onClick={() => {
-              navigate("/login");
-            }} className="px-6 py-3 rounded-2xl border border-white/20 backdrop-blur-sm">
+            <button
+              onClick={() => navigate("/login")}
+              className="px-5 sm:px-6 py-3 rounded-2xl border border-white/20 backdrop-blur-sm w-full sm:w-auto"
+            >
               Login
             </button>
-            <button className="px-6 py-3 rounded-2xl border border-white/20 backdrop-blur-sm">
+            {/* <button className="px-5 sm:px-6 py-3 rounded-2xl border border-white/20 backdrop-blur-sm w-full sm:w-auto">
               How to play
-            </button>
+            </button> */}
           </motion.div>
-
-          {/* Small features */}
-          <div className="mt-8 grid grid-cols-2 gap-3 text-slate-200/80">
-            {/* <div className="p-3 bg-white/3 rounded-lg">Private Rooms</div>
-            <div className="p-3 bg-white/3 rounded-lg">Custom Prompts</div>
-            <div className="p-3 bg-white/3 rounded-lg">Multiplayer</div>
-            <div className="p-3 bg-white/3 rounded-lg">Mobile Ready</div> */}
+          {/* Features (desktop only) */}
+          <div className="hidden md:grid grid-cols-2 gap-3 mt-8 text-slate-200/80 text-sm">
+            <div className="p-3 bg-white/5 rounded-xl shadow-md">🎉 Private Rooms</div>
+            <div className="p-3 bg-white/5 rounded-xl shadow-md">✍️ Custom Prompts</div>
+            <div className="p-3 bg-white/5 rounded-xl shadow-md">🤝 Multiplayer</div>
+            <div className="p-3 bg-white/5 rounded-xl shadow-md">📱 Public Rooms</div>
           </div>
+
         </div>
 
         {/* Right: Rotating PNG bottle */}
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center mt-6 md:mt-0">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -165,7 +187,7 @@ export default function TruthOrDareBackgroundPage() {
             <motion.img
               src={bottlePng}
               alt="rotating bottle"
-              className="w-[320px] h-[520px] object-contain opacity-80"
+              className="w-[200px] sm:w-[260px] md:w-[340px] h-auto object-contain opacity-80"
               animate={{ rotate: 360 }}
               transition={{
                 repeat: Infinity,
@@ -173,9 +195,11 @@ export default function TruthOrDareBackgroundPage() {
                 ease: "linear",
               }}
             />
+
           </motion.div>
         </div>
       </div>
+
 
       {/* Footer */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-slate-400/60">

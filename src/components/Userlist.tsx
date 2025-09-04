@@ -41,7 +41,7 @@ export default function UserList({
         <>
             {/* Heading + Create Group Button */}
             <div className="flex justify-between items-center my-3">
-                <h2 className="md:text-3xl text-xl font-bold text-pink-400 tracking-wide">
+                <h2 className="p-2 sm:p-0 md:text-3xl text-xl font-bold text-pink-400 tracking-wide">
                     {heading}
                 </h2>
             </div>
@@ -64,17 +64,17 @@ export default function UserList({
                         <li
                             key={user.id}
                             onClick={() => onClickUser?.(user)}
-                            className="flex items-center justify-between bg-black/40 p-4 rounded-lg border border-pink-500/30 hover:bg-pink-500/10 transition cursor-pointer"
+                            className="flex items-center justify-between bg-black/40 p-2 md:p-4 rounded-lg border border-pink-500/30 hover:bg-pink-500/10 transition cursor-pointer"
                         >
                             {/* User avatar & details */}
-                            <div className="flex items-center gap-4 flex-1">
+                            <div className="flex items-center gap-2 md:gap-4 flex-1">
                                 {user.mediaUrl ? (
                                     <img
                                         src={`${user.mediaUrl}`}
-                                        className="w-12 h-12 rounded-full border border-pink-500/30 object-cover"
+                                        className="w-8 h-8 md:w-12 :h-12 rounded-full border border-pink-500/30 object-cover"
                                     />
                                 ) : (
-                                    <div className="w-12 h-12 flex justify-center items-center font-bold text-xl rounded-full border border-pink-500/30">
+                                    <div className="w-8 h-8 md:w-12 md:h-12 flex justify-center items-center font-bold text-xl rounded-full border border-pink-500/30">
                                         {user.name[0]}
                                     </div>
                                 )}

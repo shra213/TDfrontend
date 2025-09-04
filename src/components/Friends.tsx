@@ -42,7 +42,7 @@ export default function FriendsList() {
     };
 
     return (
-        <div className="flex gap-5 h-full">
+        <div className="max-w-sm sm:w-full flex gap-5 h-full">
             {/* Friends List */}
             <div className={`w-full ${selectedFriend ? "hidden md:block" : "block"}`}>
                 <UserList

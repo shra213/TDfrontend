@@ -6,6 +6,7 @@ import { doc, onSnapshot, collection, updateDoc, addDoc, query, orderBy } from "
 import { auth, db } from "../firebaseconfig";
 import truths from "./truths";
 import dares from "./dares";
+import { MessageCircle } from "lucide-react";
 import {
     handleUnremovePlayer,
     handleRemovePlayer,
@@ -253,13 +254,28 @@ export default function GamePage() {
 
     // 🔹 End Turn
 
+    const resetUnreadCount = async () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) return;
+        const chatDocRef = roomId ? doc(db, "rooms", roomId) : null;
+        if (!chatDocRef) return;
+
+
+        try {
+            await updateDoc(chatDocRef, {
+                [`unreadMap.${currentUser.uid}`]: 0,
+            });
+        } catch (err) {
+            console.error("Failed to reset unread count:", err);
+        }
+    };
 
     // 🔹 Exit Game
     const onExitGame = useCallback(() => {
         if (!currentUid) {
             return;
         }
-        handleExitGame(roomId!, roomData, currentUid, addRoomNotification, navigate);
+        handleExitGame(roomId!, roomData, currentUid, addRoomNotification, navigate, roomData.publicId);
     }, [roomId, roomData, currentUid, navigate, addRoomNotification]);
 
     // 🔹 Choose Truth/Dare
@@ -295,18 +311,7 @@ export default function GamePage() {
 
                     {/* Right-side buttons */}
                     <div className="flex items-center gap-3">
-                        {/* Mobile Open Chat Button */}
-                        {typeof setShowChat === "function" && (
-                            <button
-                                className="md:hidden flex items-center justify-center
-                   w-7 h-7 rounded-full border border-pink-500
-                   shadow-md bg-gradient-to-r from-blue-500 to-cyan-500
-                   text-white text-lg hover:scale-105 transition-transform"
-                                onClick={() => setShowChat(true)}
-                            >
-                                💬
-                            </button>
-                        )}
+
 
 
                         {/* Desktop Buttons */}
@@ -333,6 +338,23 @@ export default function GamePage() {
                                 Details
                             </button>
                         </div>
+
+                        {/* const unreadCount = currentUid ? roomData.unreadMap[currentUid] : 0; */}
+
+                        {typeof setShowChat === "function" && (
+                            <div className="relative inline-block" onClick={() => setShowChat(true)}>
+                                <MessageCircle className="text-white hover:text-pink-500 w-6 h-6" />
+
+                                {/* Unread badge */}
+                                {currentUid && roomData?.unreadMap?.[currentUid] > 0 && (
+                                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 bg-green-500 text-xs font-bold text-white rounded-full">
+                                        {roomData.unreadMap[currentUid]}
+                                    </span>
+                                )}
+                            </div>
+                        )}
+
+
 
                         {/* Profile */}
                         <div
@@ -487,7 +509,7 @@ export default function GamePage() {
                             // Make a copy and shuffle in-place
                             const shuffledPlayers = shufflePlayers();
                             return (
-                                <div className="flex-1 flex flex-col items-center justify-center text-center">
+                                <div className="flex-1 pt-3 flex flex-col items-center justify-center text-center">
                                     {/* Spinner Section */}
                                     <div className="flex items-center justify-center ">
                                         <Spinner players={shuffledPlayers} cnt={shuffledPlayers.length} started={roomData.isStarted} />
@@ -511,20 +533,20 @@ export default function GamePage() {
                                 {currentUid === currentAsker.id ? (
                                     <>
                                         {/* Input Label */}
-                                        <p className="mb-4 text-xl md:text-3xl md:mb-10 font-bold tracking-wide text-center">
+                                        <p className="mb-5 text-xl md:text-3xl md:mb-10 font-bold tracking-wide text-center">
                                             🎭 Mode:{" "}
                                             <span className="uppercase font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 drop-shadow-[0_0_8px_rgba(0,224,255,0.4)]">
                                                 {roomData.choice}
                                             </span>
                                         </p>
 
-                                        <div className="mb-3 text-base font-medium text-white/80">
+                                        {<div className="hidden md:block mb-3 text-base font-medium text-white/80">
                                             ✍️ Enter your{" "}
                                             <span className="capitalize font-semibold text-cyan-300">
                                                 {roomData.choice}
                                             </span>
                                             :
-                                        </div>
+                                        </div>}
 
                                         {/* Input Field */}
                                         <div className="relative w-full max-w-2xl flex gap-3">
@@ -567,8 +589,12 @@ export default function GamePage() {
                                                 }}
 
                                             >
-                                                <Shuffle className="w-4 h-4 text-white" />
-                                                Random
+                                                <button className="flex items-center gap-2">
+                                                    <Shuffle className="w-4 h-4 text-white" />
+                                                    <span className="hidden md:inline">Random</span>
+                                                </button>
+
+
                                             </button>
                                         </div>
 
@@ -603,7 +629,7 @@ export default function GamePage() {
                 {/* Desktop */}
                 <div className="hidden md:flex justify-center items-center w-1/3 p-4">
                     <Suspense fallback={<div>Loading...</div>}>
-                        <RoomChat roomId={roomId} onBack={() => console.log("")} />
+                        <RoomChat players={players} roomId={roomId} onBack={() => console.log("")} />
                     </Suspense>
                 </div>
 
@@ -613,7 +639,10 @@ export default function GamePage() {
                     <div className="fixed inset-0 z-[120] bg-black/90 p-2">
                         <div className="flex-1 custom-scrollbar">
                             <Suspense fallback={<div>Loading...</div>}>
-                                <RoomChat roomId={roomId} onBack={() => setShowChat(false)} />
+                                <RoomChat players={players} roomId={roomId} onBack={() => {
+                                    setShowChat(false)
+                                    resetUnreadCount();
+                                }} />
                             </Suspense>
                         </div>
                     </div>

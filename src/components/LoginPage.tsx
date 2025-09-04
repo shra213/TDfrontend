@@ -31,7 +31,7 @@ export default function Login() {
   }, []);
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center text-white">
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center text-white px-4 sm:px-6">
       {/* Animated Neon Background */}
       <motion.div
         className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-900 to-black"
@@ -65,10 +65,10 @@ export default function Login() {
         initial={{ opacity: 0, scale: 0.85, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-md rounded-2xl bg-black/40 backdrop-blur-md p-8 shadow-2xl"
+        className="relative z-10 w-full max-w-md rounded-2xl bg-black/40 backdrop-blur-md p-6 sm:p-8 shadow-2xl"
       >
         <h2
-          className="text-4xl font-extrabold text-center mb-8 tracking-wide"
+          className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-6 sm:mb-8 tracking-wide"
           style={{
             textShadow: "0 0 10px #ff00ff, 0 0 25px #ff00ff, 0 0 50px #ff00ff",
           }}
@@ -76,9 +76,12 @@ export default function Login() {
           Login
         </h2>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-5 sm:space-y-6">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2" htmlFor="email">
+            <label
+              className="block text-xs sm:text-sm font-medium text-slate-300 mb-2"
+              htmlFor="email"
+            >
               Email
             </label>
             <motion.input
@@ -86,15 +89,20 @@ export default function Login() {
               id="email"
               type="email"
               value={email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
               placeholder="Enter your email"
-              className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-pink-500"
+              className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-pink-500 text-sm sm:text-base"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2" htmlFor="password">
+            <label
+              className="block text-xs sm:text-sm font-medium text-slate-300 mb-2"
+              htmlFor="password"
+            >
               Password
             </label>
             <motion.input
@@ -102,9 +110,11 @@ export default function Login() {
               id="password"
               type="password"
               value={password}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
               placeholder="Enter your password"
-              className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-pink-500"
+              className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-pink-500 text-sm sm:text-base"
               required
             />
           </div>
@@ -113,12 +123,13 @@ export default function Login() {
             type="submit"
             whileHover={{ scale: 1.05, boxShadow: "0 0 20px #ff4da6" }}
             whileTap={{ scale: 0.97 }}
-            className="w-full py-3 rounded-lg bg-gradient-to-r from-pink-500 to-rose-500 shadow-lg font-semibold"
+            className="w-full py-2.5  sm:py-3 rounded-lg bg-gradient-to-r from-pink-500 to-rose-500 shadow-lg font-semibold text-sm sm:text-base"
           >
             Login
           </motion.button>
         </form>
       </motion.div>
     </div>
+
   );
 }

@@ -3,10 +3,22 @@ import ProfileSection from "./Profile";
 import AcceptFriendRequests from "./PendingReq";
 import { motion } from "framer-motion";
 import { Heart, HeartPulse, LogOut } from "lucide-react"; // icons
-
+import { auth } from "../firebaseconfig";
 export default function ProfileWithPendingRequests() {
-    const [showPending, setShowPending] = useState(false);
 
+    const [showPending, setShowPending] = useState(false);
+    const handleLogout = async () => {
+        try {
+            const currentUser = auth.currentUser;
+            if (!currentUser) throw new Error("User not logged in");
+
+            await auth.signOut();
+            localStorage.clear();
+            window.location.href = "/login"; // Redirect to login page
+        } catch (err: any) {
+            console.log("unable to logout")
+        }
+    };
     return (
         <div className="h-full relative z-10 container mx-auto flex flex-col md:flex-row gap-6">
             {/* Mobile Top Bar */}
@@ -23,7 +35,7 @@ export default function ProfileWithPendingRequests() {
                     )}
                 </button>
                 <button
-                    onClick={() => console.log("Logout clicked")} // hook up your logout logic here
+                    onClick={() => handleLogout()} // hook up your logout logic here
                     className="p-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 transition shadow-lg"
                 >
                     <LogOut className="w-6 h-6 text-red-400" />
@@ -59,6 +71,6 @@ export default function ProfileWithPendingRequests() {
                     <AcceptFriendRequests />
                 </div>
             </motion.div>
-        </div>
+        </div >
     );
 }

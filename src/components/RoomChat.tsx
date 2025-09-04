@@ -10,6 +10,8 @@ import {
     orderBy,
     onSnapshot,
     serverTimestamp,
+    increment,
+    updateDoc
 } from "firebase/firestore";
 import { db, auth } from "../firebaseconfig";
 
@@ -21,9 +23,10 @@ interface RoomMessage {
     type: "text" | "image" | "video" | "doc";
     mediaUrl?: string;
     sentAt: any;
+    players: any
 }
 
-export default function RoomChat({ roomId, onBack }: { roomId: any, onBack?: () => void }) {
+export default function RoomChat({ players, roomId, onBack }: { roomId: any, onBack?: () => void, players: any }) {
     const [messages, setMessages] = useState<RoomMessage[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -60,8 +63,19 @@ export default function RoomChat({ roomId, onBack }: { roomId: any, onBack?: () 
             senderName,
             text: newMessage,
             type: "text",
-            sentAt: serverTimestamp(),
+            sentAt: serverTimestamp()
         });
+        const chatDocRef = doc(db, "rooms", roomId); // roomId = chatId
+        const updates: any = {};
+
+        // Increment unread count for everyone except sender
+        players.forEach((player: any) => {
+            if (player.id !== currentUser.uid) {
+                updates[`unreadMap.${player.id}`] = increment(1);
+            }
+        });
+
+        await updateDoc(chatDocRef, updates);
         setNewMessage("");
     };
 
@@ -73,7 +87,7 @@ export default function RoomChat({ roomId, onBack }: { roomId: any, onBack?: () 
             className="relative z-10 w-full max-w-sm md:max-w-2xl h-[90vh] md:h-[80vh] mx-auto flex flex-col rounded-3xl bg-black/50 backdrop-blur-md shadow-2xl overflow-hidden"
         >
             {/* Header */}
-            <div className="flex items-center gap-3 p-4 border-b border-white/20 bg-black/60">
+            <div className="flex items-center gap-3 p-1 md:p-4 border-b border-white/20 bg-black/60">
                 {onBack && (
                     <button onClick={onBack} className="block md:hidden p-2 hover:text-pink-400 transition">
                         <ArrowLeft size={22} />
@@ -109,15 +123,15 @@ export default function RoomChat({ roomId, onBack }: { roomId: any, onBack?: () 
 
             {/* Input */}
             <div className="flex items-center gap-2 p-3 border-t border-white/20 bg-black/60">
-                <button className="p-1 hover:text-pink-400 transition">
-                    <Paperclip size={20} />
+                <button className="p-1 pl-0 ml-0 hover:text-pink-400 transition">
+                    <Paperclip size={18} />
                 </button>
                 <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Type a message..."
-                    className="sm:w-full flex-1 px-2 py-1 rounded-sm bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-pink-500"
+                    className="max-w-[75%] ml-0 sm:w-full flex-1 px-2 py-1 rounded-sm bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-pink-500"
                     onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 />
                 <motion.button

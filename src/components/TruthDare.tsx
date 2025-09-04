@@ -20,10 +20,11 @@ interface TruthDareProps {
   media?: any;
   fixAnswer?: any;
   answerer?: any;
+  publicId?: any
 }
 const apiUrl = import.meta.env.VITE_API_URL;
 
-function TruthDare({ question, dbmode, roomId, click, gameStatus, Asker, media, fixAnswer, answerer }: TruthDareProps) {
+function TruthDare({ question, dbmode, roomId, click, gameStatus, Asker, media, fixAnswer, answerer, publicId }: TruthDareProps) {
   console.log(fixAnswer ? fixAnswer : "answerrr");
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
 
@@ -269,7 +270,7 @@ function TruthDare({ question, dbmode, roomId, click, gameStatus, Asker, media, 
 
 
   const onEndTurn = useCallback(() => {
-    handleEndTurn(roomId!);
+    handleEndTurn(roomId!, publicId);
   }, [db, roomId]);
 
   // const handleBack = () => {
@@ -703,7 +704,7 @@ function TruthDare({ question, dbmode, roomId, click, gameStatus, Asker, media, 
                         onClick={() => {
                           console.log(media[0])
                         }}
-                        href={`${import.meta.env.BASE_URL}${media}`}
+                        href={`${media}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-400 underline"
