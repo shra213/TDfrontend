@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useFriendsStore } from "../stores/friendsStore";
 import { auth } from "../firebaseconfig";
+import { useNavigate } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function InviteToRoomPage() {
+    const navigate = useNavigate();
     const friends = useFriendsStore((state) => state.friends);
     const [searchFriends, setSearchFriends] = useState("");
     const [selectedFriendIds, setSelectedFriendIds] = useState<Set<string>>(new Set());
@@ -77,6 +79,7 @@ export default function InviteToRoomPage() {
             setSelectedFriendIds(new Set());
             setSearchFriends("");
             setIsModalOpen(false);
+            navigate("/rooms");
         } catch (error) {
             console.error("Error creating room:", error);
             alert("Something went wrong. Check console for details.");
@@ -84,7 +87,7 @@ export default function InviteToRoomPage() {
     }
     console.log(filteredFriends, "filtered friends");
     return (
-        <div className="mx-auto p-3 md:p-6 min-h-screen text-white rounded-lg shadow-lg">
+        <div className="max-w-[95%] mx-auto p-3 md:p-6 min-h-screen text-white rounded-lg shadow-lg">
             {/* Header with button side by side */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                 <h1 className="text-xl sm:text-3xl font-bold text-center sm:text-left">
@@ -145,8 +148,8 @@ export default function InviteToRoomPage() {
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50 px-4">
-                    <div className="bg-black p-4 sm:p-6 rounded-xl border border-pink-500/50 w-full max-w-md">
+                <div className=" md:max-w-full fixed inset-0 flex items-center justify-center bg-black/60 z-50 px-4">
+                    <div className="max-w-[70%] md:max-w-md bg-black p-4 sm:p-6 rounded-xl border border-pink-500/50 w-full">
                         <h2 className="text-lg sm:text-xl font-bold mb-4">Room Details</h2>
 
                         <label className="block mb-4">

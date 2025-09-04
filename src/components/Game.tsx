@@ -58,14 +58,15 @@ export default function GamePage() {
     // import { useEffect, useCallback } from "react";
 
     // 🔹 Online Status
-    const setOnlineStatus = (async (status: boolean) => {
+    const setOnlineStatus = useCallback(async (status: boolean) => {
         if (!roomId || !auth.currentUser) return;
         const playerRef = doc(db, "rooms", roomId, "players", auth.currentUser.uid);
         await updateDoc(playerRef, {
             isOnline: status,
             lastActive: new Date(),
         });
-    });
+    }, [roomId]);
+
 
     useEffect(() => {
         if (!roomId || !auth.currentUser) return;
@@ -341,22 +342,7 @@ export default function GamePage() {
 
                         {/* const unreadCount = currentUid ? roomData.unreadMap[currentUid] : 0; */}
 
-                        <div className=" sm:hidden">
-                            {typeof setShowChat === "function" && (
-                                <div className="relative inline-block" onClick={() => setShowChat(true)}>
-                                    <MessageCircle className="text-white hover:text-pink-500 w-6 h-6" />
 
-                                    {/* Unread badge */}
-                                    {currentUid && roomData?.unreadMap?.[currentUid] > 0 && (
-                                        <span className="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center w-2 h-2 px-1 bg-green-500 text-xs font-bold text-white rounded-full">
-                                            { }
-                                        </span>
-                                    )}
-                                </div>
-                            )}
-
-
-                        </div>
 
                         {/* Profile */}
                         <div
@@ -374,6 +360,20 @@ export default function GamePage() {
 
             </div >
 
+            {!showChat && <div className="fixed bottom-8 right-5 z-50 sm:hidden bg-pink-600 p-3 rounded-full">
+                {typeof setShowChat === "function" && (
+                    <div className="relative inline-block" onClick={() => setShowChat(true)}>
+                        <MessageCircle className="text-white hover:text-pink-500 w-6 h-6" />
+
+                        {/* Unread badge */}
+                        {currentUid && roomData?.unreadMap?.[currentUid] > 0 && (
+                            <span className="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center w-2 h-2 px-1 bg-green-500 text-xs font-bold text-white rounded-full">
+                                { }
+                            </span>
+                        )}
+                    </div>
+                )}
+            </div>}
             {/* 🔹 Sidebar Overlay */}
             {
                 showSidebar && (
