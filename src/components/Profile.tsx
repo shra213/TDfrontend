@@ -91,15 +91,21 @@ export default function ProfileSection() {
             if (!currentUser) throw new Error("User not logged in");
 
             const formData = new FormData();
+            console.log(file);
             formData.append("file", file);
 
             // Upload to backend (Multer)
-            console.log("what happened");
+            console.log(formData);
             console.log(`${url}/upload`);
             const uploadRes = await fetch(`${url}/upload`, {
                 method: "POST",
                 body: formData,
             });
+
+            if (!uploadRes.ok) {
+                console.log(uploadRes);
+                return;
+            }
             console.log("dontknow");
             const uploadData = await uploadRes.json();
             console.log(uploadData);
