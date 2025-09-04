@@ -36,13 +36,19 @@ export default function FriendsList() {
             await updateDoc(chatDocRef, {
                 [`unreadMap.${currentUser.uid}`]: 0,
             });
+            const user = doc(db, "users", currentUser.uid);
+            await updateDoc(user, {
+                totalUnread: 0
+            })
+
+            // await 
         } catch (err) {
             console.error("Failed to reset unread count:", err);
         }
     };
 
     return (
-        <div className="max-w-sm sm:w-full flex gap-5 h-full">
+        <div className="max-w-sm sm:w-full sm:max-w-full flex gap-5 h-full">
             {/* Friends List */}
             <div className={`w-full ${selectedFriend ? "hidden md:block" : "block"}`}>
                 <UserList

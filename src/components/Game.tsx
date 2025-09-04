@@ -58,14 +58,14 @@ export default function GamePage() {
     // import { useEffect, useCallback } from "react";
 
     // 🔹 Online Status
-    const setOnlineStatus = useCallback(async (status: boolean) => {
+    const setOnlineStatus = (async (status: boolean) => {
         if (!roomId || !auth.currentUser) return;
         const playerRef = doc(db, "rooms", roomId, "players", auth.currentUser.uid);
         await updateDoc(playerRef, {
             isOnline: status,
             lastActive: new Date(),
         });
-    }, [roomId]);
+    });
 
     useEffect(() => {
         if (!roomId || !auth.currentUser) return;
@@ -341,20 +341,22 @@ export default function GamePage() {
 
                         {/* const unreadCount = currentUid ? roomData.unreadMap[currentUid] : 0; */}
 
-                        {typeof setShowChat === "function" && (
-                            <div className="relative inline-block" onClick={() => setShowChat(true)}>
-                                <MessageCircle className="text-white hover:text-pink-500 w-6 h-6" />
+                        <div className=" sm:hidden">
+                            {typeof setShowChat === "function" && (
+                                <div className="relative inline-block" onClick={() => setShowChat(true)}>
+                                    <MessageCircle className="text-white hover:text-pink-500 w-6 h-6" />
 
-                                {/* Unread badge */}
-                                {currentUid && roomData?.unreadMap?.[currentUid] > 0 && (
-                                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 bg-green-500 text-xs font-bold text-white rounded-full">
-                                        {roomData.unreadMap[currentUid]}
-                                    </span>
-                                )}
-                            </div>
-                        )}
+                                    {/* Unread badge */}
+                                    {currentUid && roomData?.unreadMap?.[currentUid] > 0 && (
+                                        <span className="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center w-2 h-2 px-1 bg-green-500 text-xs font-bold text-white rounded-full">
+                                            { }
+                                        </span>
+                                    )}
+                                </div>
+                            )}
 
 
+                        </div>
 
                         {/* Profile */}
                         <div
@@ -651,7 +653,7 @@ export default function GamePage() {
 
 
             {/* 🔹 Room Details Modal */}
-            {
+            {/* {
                 showDetails && roomData && (
                     <div className="flex flex-col sm:flex-row justify-between text-lg font-semibold mb-6 text-center gap-3 sm:gap-0">
 
@@ -723,7 +725,7 @@ export default function GamePage() {
                         </div>
                     </div>
                 )
-            }
+            } */}
 
             {showDetails && roomData && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">

@@ -96,10 +96,10 @@ export default function Navbar() {
                         <MessageCircle className="w-6 h-6" />
 
                         {/* Unread messages badge */}
-                        <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 bg-green-500 text-xs font-bold text-white rounded-full">
-                            {notifications}
+                        <span className="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center w-2 h-2 px-1 bg-green-500 text-xs font-bold text-white rounded-full">
+                            { }
                         </span>
-                    </button>:""}
+                    </button> : ""}
                     {/* Profile Image */}
                     <Link to="/profile">
                         <img

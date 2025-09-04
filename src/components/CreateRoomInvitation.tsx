@@ -118,7 +118,7 @@ export default function InviteToRoomPage() {
                             >
                                 {friend.mediaUrl ? (
                                     <img
-                                        src={`${import.meta.env.VITE_BASE_URL}${friend.mediaUrl}` || "https://i.prmediaUrl.cc/100"}
+                                        src={`${friend.mediaUrl}` || "https://i.prmediaUrl.cc/100"}
                                         className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-pink-500/30 object-cover"
                                     />
                                 ) : (

@@ -71,7 +71,7 @@ export default function UserList({
                                 {user.mediaUrl ? (
                                     <img
                                         src={`${user.mediaUrl}`}
-                                        className="w-8 h-8 md:w-12 :h-12 rounded-full border border-pink-500/30 object-cover"
+                                        className="w-8 h-8 md:w-12 md:h-12 rounded-full border border-pink-500/30 object-cover"
                                     />
                                 ) : (
                                     <div className="w-8 h-8 md:w-12 md:h-12 flex justify-center items-center font-bold text-xl rounded-full border border-pink-500/30">
