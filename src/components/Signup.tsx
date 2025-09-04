@@ -84,13 +84,10 @@ const Signup: React.FC = () => {
         })
       );
 
-      setMessage(
-        "Account created successfully! Please check your email for verification code."
-      );
-      setIsError(false);
+
 
       // Send OTP request
-      await fetch(`${import.meta.env.VITE_BASE_URL}/api/otp/sendOtp`, {
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/otp/sendOtp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -99,7 +96,16 @@ const Signup: React.FC = () => {
           name: formData.name,
         }),
       });
-
+      const data = await res.json();
+      if (!res.ok) {
+        setMessage(data.message);
+        setIsError(true);
+        return;
+      }
+      setMessage(
+        "Please check your email for verification code."
+      );
+      setIsError(false);
       setTimeout(() => {
         navigate("/verify-otp");
       }, 1000);

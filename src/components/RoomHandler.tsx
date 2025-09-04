@@ -183,6 +183,7 @@ export const handleEndGame = async (
 export const handleEndTurn = async (roomId: string, publicId?: string) => {
     if (!roomId) return;
     const roomRef = doc(db, "rooms", roomId);
+    console.log(publicId, "publicId");
     if (publicId) {
         fetch(`${import.meta.env.VITE_BASE_URL}/delete-file`, {
             method: "DELETE",
@@ -193,6 +194,7 @@ export const handleEndTurn = async (roomId: string, publicId?: string) => {
             .then((data) => console.log("File deleted:", data))
             .catch((err) => console.error("Failed to delete file:", err));
     }
+    console.log(publicId, "deleted in frontend");
     await updateDoc(roomRef, {
         choice: "",
         question: "",

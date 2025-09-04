@@ -61,7 +61,7 @@ export default function Nav() {
                 {/* Content wrapper */}
                 <div className="pt flex justify-center w-full">
                     <div
-                        className={`absolute top-25 md:top-30 min-h-[70vh] ${"md:min-w-[80%]"
+                        className={`absolute top-20 md:top-30 min-h-[70vh] ${"md:min-w-[80%]"
                             } bg-gradient-to-br from-pink-600/30 via-black/50 to-purple-800/30 backdrop-blur-xl rounded-2xl md:border border-pink-500 p-3 md:p-8 md:shadow-[0_0_25px_rgba(236,72,153,0.5)] hover:shadow-[0_0_40px_rgba(236,72,153,0.8)] transition-all duration-300 text-sm`}
                     >
                         {path === "/friends" ? (

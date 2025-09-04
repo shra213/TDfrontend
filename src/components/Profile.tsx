@@ -5,6 +5,7 @@ interface User {
     name: string;
     email: string;
     birthdate: string;
+    publicId?: string;
     mediaUrl?: string;
 }
 
@@ -39,6 +40,7 @@ export default function ProfileSection() {
                 const data: User = await res.json();
                 localStorage.setItem("name", data.name);
                 localStorage.setItem("prf", data.mediaUrl || "");
+                localStorage.setItem("publicId", data.publicId || "")
                 setUser(data);
             } catch (err: any) {
                 setError(err.message);
@@ -111,10 +113,22 @@ export default function ProfileSection() {
                     "Content-Type": "application/json",
                     "Authorization": `bearer ${token}`,
                 },
-                body: JSON.stringify({ mediaUrl: fileUrl }),
+                body: JSON.stringify({ mediaUrl: fileUrl, publicId: uploadData.publicId }),
             });
-
             if (!res.ok) throw new Error("Failed to update profile picture");
+            const ponse = await fetch(`${url}/delete-file`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `bearer ${token}`,
+                },
+                body: JSON.stringify({ publicId: localStorage.getItem("publicId") }),
+            });
+            if (!ponse.ok) {
+                const ponseData = await ponse.json();
+                console.log(ponseData);
+                return;
+            }
             setUser((prev) => (prev ? { ...prev, mediaUrl: fileUrl } : prev));
         } catch (err: any) {
             setError(err.message);
