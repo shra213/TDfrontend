@@ -31,7 +31,7 @@ const Signup: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-
+      console.log(file);
       // Upload to backend (Multer)
 
       const uploadRes = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
