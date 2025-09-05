@@ -44,9 +44,9 @@ export default function RoomChat({ players, roomId, onBack }: { roomId: any, onB
         if (!roomId) return;
         const q = query(
             collection(db, "rooms", roomId, "messages"),
-            orderBy("sentAt", "desc"), // 🔥 latest first
+            orderBy("sentAt", "asc"), // 🔥 latest first
             limit(8)                  // 🔥 max 15 docs
-        );;
+        );
         const unsub = onSnapshot(q, (snapshot) => {
             const msgs: RoomMessage[] = snapshot.docs.map((doc) => ({
                 id: doc.id,
