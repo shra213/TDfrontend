@@ -11,7 +11,8 @@ import {
     onSnapshot,
     serverTimestamp,
     increment,
-    updateDoc
+    updateDoc,
+    limit
 } from "firebase/firestore";
 import { db, auth } from "../firebaseconfig";
 
@@ -41,7 +42,11 @@ export default function RoomChat({ players, roomId, onBack }: { roomId: any, onB
     // Fetch room messages in real-time
     useEffect(() => {
         if (!roomId) return;
-        const q = query(collection(db, "rooms", roomId, "messages"), orderBy("sentAt", "asc"));
+        const q = query(
+            collection(db, "rooms", roomId, "messages"),
+            orderBy("sentAt", "asc"), // 🔥 latest first
+            limit(8)                  // 🔥 max 15 docs
+        );
         const unsub = onSnapshot(q, (snapshot) => {
             const msgs: RoomMessage[] = snapshot.docs.map((doc) => ({
                 id: doc.id,

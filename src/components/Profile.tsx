@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { auth } from "../firebaseconfig";
 
 interface User {
@@ -12,44 +12,52 @@ interface User {
 const url = import.meta.env.VITE_API_URL;
 console.log(url, "url")
 export default function ProfileSection() {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    if (!auth.currentUser) {
+        return;
+    }
+    //@ts-ignore
+    const [user, setUser] = useState<User | null>(() => {
+        const stored = localStorage.getItem("user");
+        return stored ? JSON.parse(stored) as User : null;
+    });
+
+    // const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [editingField, setEditingField] = useState<string | null>(null);
     const [editValue, setEditValue] = useState<string>("");
-
+    console.log(user);
     // Fetch profile data
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const currentUser = auth.currentUser;
-                if (!currentUser) throw new Error("User not logged in");
+    // useEffect(() => {
+    //     const fetchProfile = async () => {
+    //         try {
+    //             const currentUser = auth.currentUser;
+    //             if (!currentUser) throw new Error("User not logged in");
 
-                const token = await currentUser.getIdToken();
-                const res = await fetch(`${url}/user/me`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `bearer ${token}`,
-                    },
-                });
+    //             const token = await currentUser.getIdToken();
+    //             const res = await fetch(`${url}/user/me`, {
+    //                 method: "GET",
+    //                 headers: {
+    //                     "Content-Type": "application/json",
+    //                     "Authorization": `bearer ${token}`,
+    //                 },
+    //             });
 
-                if (!res.ok) throw new Error("Failed to fetch profile");
+    //             if (!res.ok) throw new Error("Failed to fetch profile");
 
-                const data: User = await res.json();
-                localStorage.setItem("name", data.name);
-                localStorage.setItem("prf", data.mediaUrl || "");
-                localStorage.setItem("publicId", data.publicId || "")
-                setUser(data);
-            } catch (err: any) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProfile();
-    }, []);
+    //             const data: User = await res.json();
+    //             localStorage.setItem("name", data.name);
+    //             localStorage.setItem("prf", data.mediaUrl || "");
+    //             localStorage.setItem("publicId", data.publicId || "")
+    //             setUser(data);
+    //         } catch (err: any) {
+    //             setError(err.message);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+    //     fetchProfile();
+    // }, []);
 
     const handleEdit = (field: keyof User) => {
         console.log("Editing field set to:", field); // Debug
@@ -76,6 +84,7 @@ export default function ProfileSection() {
 
             if (!res.ok) throw new Error("Failed to update profile");
             setUser({ ...user, [editingField]: editValue });
+            localStorage.setItem("user", JSON.stringify({ ...user, [editingField]: editValue }))
             setEditingField(null);
         } catch (err: any) {
             setError(err.message);
@@ -159,7 +168,6 @@ export default function ProfileSection() {
         }
     };
 
-    if (loading) return <p className="text-white">Loading profile...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
     if (!user) return <p className="text-white">No profile found</p>;
 
@@ -188,25 +196,9 @@ export default function ProfileSection() {
                 {/* Name */}
                 <div>
                     <span className="block text-sm text-gray-400">Name</span>
-                    {editingField === "name" ? (
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                value={editValue}
-                                onChange={(e) => setEditValue(e.target.value)}
-                                className="px-2 py-1 rounded bg-gray-800 text-white border border-gray-600"
-                            />
-                            <button
-                                onClick={handleSave}
-                                className="px-3 py-1 bg-green-500 rounded hover:bg-green-600"
-                            >
-                                Save
-                            </button>
-                        </div>
-                    ) : (
+                    {(
                         <span
                             className="text-lg cursor-pointer hover:underline"
-                            onClick={() => handleEdit("name")}
                         >
                             {user.name}
                         </span>
@@ -216,25 +208,9 @@ export default function ProfileSection() {
                 {/* Email */}
                 <div>
                     <span className="block text-sm text-gray-400">Email</span>
-                    {editingField === "email" ? (
-                        <div className="flex gap-2">
-                            <input
-                                type="email"
-                                value={editValue}
-                                onChange={(e) => setEditValue(e.target.value)}
-                                className="px-2 py-1 rounded bg-gray-800 text-white border border-gray-600"
-                            />
-                            <button
-                                onClick={handleSave}
-                                className="px-3 py-1 bg-green-500 rounded hover:bg-green-600"
-                            >
-                                Save
-                            </button>
-                        </div>
-                    ) : (
+                    {(
                         <div className="flex flex-col">
                             <span
-                                onClick={() => handleEdit("email")}
                                 className="text-lg text-white cursor-pointer"
                             >
                                 {user.email.length > 20 ? (

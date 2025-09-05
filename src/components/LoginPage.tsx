@@ -14,6 +14,7 @@ export default function Login() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in:", userCredential.user);
       navigate("/front")
+      
     } catch (error) {
       console.error("Error logging in:", error);
     }

@@ -31,7 +31,7 @@ export default function UserList({
     const [search, setSearch] = useState("");
 
     const filteredUsers = users.filter((user) =>
-        user.name.toLowerCase().includes(search.toLowerCase())
+        user.name?.toLowerCase().includes(search.toLowerCase())
     );
     const currentUser = auth.currentUser?.uid;
     if (!currentUser) {
@@ -39,6 +39,9 @@ export default function UserList({
     }
     return (
         <>
+            {filteredUsers.length === 0 && <div className="flex justify-center items-center h-full text-gray-400">
+                No users found
+            </div >}
             {/* Heading + Create Group Button */}
             <div className="flex justify-between items-center my-3">
                 <h2 className="p-2 sm:p-0 md:text-3xl text-xl font-bold text-pink-400 tracking-wide">
@@ -47,13 +50,13 @@ export default function UserList({
             </div>
 
             {/* Search Bar */}
-            <input
+            {filteredUsers.length > 0 && <input
                 type="text"
                 placeholder={searchPlaceholder}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full mb-4 p-2 rounded-lg border border-pink-500/30 bg-black/40 text-white placeholder-gray-400 focus:outline-none focus:border-pink-500"
-            />
+            />}
 
             {/* User List */}
             {/* Wrapper for full height */}

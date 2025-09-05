@@ -10,7 +10,8 @@ import {
     onSnapshot,
     serverTimestamp,
     updateDoc,
-    increment
+    increment,
+    limit
 } from "firebase/firestore";
 import { db, auth } from "../firebaseconfig";
 
@@ -41,7 +42,8 @@ export default function ChatCard({ friend, onBack }: any) {
 
         const q = query(
             collection(db, "friends", chatId, "messages"),
-            orderBy("sentAt", "asc")
+            orderBy("sentAt", "asc"),
+            limit(8)
         );
 
         const unsub = onSnapshot(q, (snapshot) => {
