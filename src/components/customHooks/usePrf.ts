@@ -1,14 +1,7 @@
 import { useEffect, useState } from 'react';
 import { db, auth } from '../../firebaseconfig';
 import { doc, onSnapshot } from 'firebase/firestore';
-interface User {
-    name: string;
-    email: string;
-    birthdate: string;
-    publicId?: string;
-    mediaUrl?: string;
-    totalUnread?: any;
-}
+
 export function useProfile() {
     const [cnt, setCnt] = useState(0);
     const [mediaUrl, setMediaUrl] = useState();

@@ -22,13 +22,7 @@ const RoomChat = React.lazy(() => import('./RoomChat'))
 const Spinner = React.lazy(() => import('./TruthDareWheel'));
 const TruthDare = React.lazy(() => import('./TruthDare'));
 
-interface User {
-    name: string;
-    email: string;
-    birthdate: string;
-    publicId?: string;
-    mediaUrl?: string;
-}
+
 const apiUrl = import.meta.env.VITE_API_URL;
 export default function GamePage() {
     const navigate = useNavigate();

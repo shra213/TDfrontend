@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { PlusCircle, LogIn } from "lucide-react"; // icons for create/join
-import { useProfile } from "../components/customHooks/usePrf";
 const beerBottleUrl = "bottle.png";
 
 const profiles = [

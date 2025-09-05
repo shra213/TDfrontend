@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { auth } from "../firebaseconfig";
-import { useProfile } from "./customHooks/usePrf";
+
 interface User {
     name: string;
     email: string;
