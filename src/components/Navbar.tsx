@@ -1,14 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { MessageCircle } from "lucide-react";
-import { db, auth } from "../firebaseconfig";
-import { doc, onSnapshot } from "firebase/firestore";
+import { useProfile } from "./customHooks/usePrf";
 export default function Navbar() {
     const location = useLocation();
     const [activeTab, setActiveTab] = useState(location.pathname);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [notifications, setNotifications] = useState();
-    const [mediaUrl, setMediaUrl] = useState();
+    // const [notifications, setNotifications] = useState();
+    // const [mediaUrl, setMediaUrl] = useState();
     const navItems = [
         { name: "Home", path: "/front" },
         { name: "Friends", path: "/friends" },
@@ -17,22 +16,8 @@ export default function Navbar() {
         { name: "Create Room", path: "/create-room" },
         { name: "Join Room", path: "/rooms" }
     ];
-    useEffect(() => {
-        if (!auth.currentUser) return;
+    const { mediaUrl, cnt } = useProfile();
 
-        const userRef = doc(db, "users", auth.currentUser.uid);
-
-        // Listen to user document changes
-        const unsubscribe = onSnapshot(userRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                setMediaUrl(data.mediaUrl || "");
-                setNotifications(data.totalUnread || 0); // assume unreadMessages field
-            }
-        });
-
-        return () => unsubscribe(); // cleanup on unmount
-    }, []);
     // Update active tab on route change
     useEffect(() => {
 
@@ -92,7 +77,7 @@ export default function Navbar() {
 
                 {/* Notification & Profile Icons */}
                 <div className="flex items-center gap-4 ml-3">
-                    {notifications ? <button className="relative text-white hover:text-pink-500">
+                    {cnt ? <button className="relative text-white hover:text-pink-500">
                         <MessageCircle className="w-6 h-6" />
 
                         {/* Unread messages badge */}

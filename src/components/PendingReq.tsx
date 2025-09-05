@@ -36,30 +36,58 @@ export default function AcceptFriendRequests() {
     };
 
     const getPendingReq = async (id: string) => {
-        const friendsRef = collection(db, "friends");
-        const pendingDocs = await getDocs(query(
-            friendsRef,
-            where("receiver", "==", id),
-            where("status", "==", "pending")
-        ));
+        try {
+            const friendsRef = collection(db, "friends");
+            const pendingQuery = query(
+                friendsRef,
+                where("receiver", "==", id),
+                where("status", "==", "pending")
+            );
 
-        const pendingList = await Promise.all(
-            pendingDocs.docs.map(async (req) => {
-                const senderSnap = await getDoc(req.data().senderRef);
-                return {
-                    id: req.data().sender,
-                    ...(senderSnap.data() ?? {})
-                };
-            })
-        );
+            const pendingDocs = await getDocs(pendingQuery);
 
-        setPending(pendingList);
+            if (pendingDocs.empty) {
+                console.log("No pending requests");
+                setPending([]); // clear pending list
+                return [];
+            }
+
+            const pendingList = await Promise.all(
+                pendingDocs.docs.map(async (req) => {
+                    const reqData = req.data();
+                    let senderData = {};
+                    try {
+                        const senderSnap = await getDoc(reqData.senderRef);
+                        senderData = senderSnap.data() ?? {};
+                    } catch (err: any) {
+                        console.warn("Cannot fetch sender info:", err.message);
+                    }
+                    return {
+                        id: reqData.sender,
+                        ...senderData
+                    };
+                })
+            );
+
+            console.log("Final pending list:", pendingList);
+            setPending(pendingList);
+            return pendingList;
+        } catch (err) {
+            console.error("Error fetching pending requests:", err);
+            setPending([]);
+            return [];
+        }
     };
+
+
 
     useEffect(() => {
         const unsubAuth = onAuthStateChanged(auth, (user) => {
             if (user) {
+                console.log(user.uid);
                 getPendingReq(user.uid);
+            } else {
+                console.log("user is not authenticated");
             }
         });
         return () => unsubAuth();

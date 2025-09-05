@@ -22,12 +22,18 @@ const RoomChat = React.lazy(() => import('./RoomChat'))
 const Spinner = React.lazy(() => import('./TruthDareWheel'));
 const TruthDare = React.lazy(() => import('./TruthDare'));
 
-
+interface User {
+    name: string;
+    email: string;
+    birthdate: string;
+    publicId?: string;
+    mediaUrl?: string;
+}
 const apiUrl = import.meta.env.VITE_API_URL;
 export default function GamePage() {
     const navigate = useNavigate();
     const [showChat, setShowChat] = useState(false);
-
+    const user = JSON.parse(localStorage.getItem("user") || "");
     const [showSidebar, setShowSidebar] = useState(false);
     const { roomId } = useParams<{ roomId: string }>();
 
@@ -282,7 +288,6 @@ export default function GamePage() {
 
     if (loading) return <p className="text-white">Loading...</p>;
     if (!hasAccess) return <Navigate to="/404" replace />;
-    console.log(`${import.meta.env.API_BASE_URL}${localStorage.getItem("prf")}`, "url for prf");
     return (
         <div className="relative min-h-screen flex flex-col text-white overflow-hidden">
             {/* 🔮 Background */}
@@ -364,7 +369,7 @@ export default function GamePage() {
                             onClick={() => setShowSidebar(true)}
                         >
                             <img
-                                src={`${localStorage.getItem("prf")}`}
+                                src={`${user.mediaUrl}`}
                                 alt="Profile"
                                 className="w-7 h-7 md:w-10 md:h-10 rounded-full border border-pink-500 shadow-md"
                             />
@@ -476,11 +481,6 @@ export default function GamePage() {
                                     </div>
                                 </div>
                             </div>
-
-
-
-
-
 
                             {roomData?.gameStatus === "waiting" && (
                                 <div className="flex-1 flex flex-col items-center justify-center gap-6">

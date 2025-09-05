@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import Friends from "../components/Friends";
 import { useLocation } from "react-router-dom";
-import Groups from "../components/Groups";
 import AddFrnds from "../components/AddFrnds";
 import PendingReq from "../components/PendingReq";
 import { motion } from "framer-motion";
@@ -66,8 +65,6 @@ export default function Nav() {
                     >
                         {path === "/friends" ? (
                             <Friends />
-                        ) : path === "/groups" ? (
-                            <Groups />
                         ) : path === "/addFrnds" ? (
                             <AddFrnds />
                         ) : path === "/pending-requests" ? (

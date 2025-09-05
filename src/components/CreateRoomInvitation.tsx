@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useFriendsStore } from "../stores/friendsStore";
 import { auth } from "../firebaseconfig";
+import { useNavigate } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function InviteToRoomPage() {
+    const navigate = useNavigate();
     const friends = useFriendsStore((state) => state.friends);
     const [searchFriends, setSearchFriends] = useState("");
     const [selectedFriendIds, setSelectedFriendIds] = useState<Set<string>>(new Set());
-
+    const [isCreating, setIsCreating] = useState(false);
     // Modal state
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [roomName, setRoomName] = useState("");
@@ -39,6 +41,7 @@ export default function InviteToRoomPage() {
             alert("Please enter a room name.");
             return;
         }
+        setIsCreating(true);
 
         const token = await auth.currentUser?.getIdToken();
         const selectedFriendsList = friends.filter((f) => selectedFriendIds.has(f.id));
@@ -77,9 +80,12 @@ export default function InviteToRoomPage() {
             setSelectedFriendIds(new Set());
             setSearchFriends("");
             setIsModalOpen(false);
+            navigate("/rooms")
         } catch (error) {
             console.error("Error creating room:", error);
             alert("Something went wrong. Check console for details.");
+        } finally {
+            setIsCreating(false);
         }
     }
     console.log(filteredFriends, "filtered friends");
@@ -179,9 +185,14 @@ export default function InviteToRoomPage() {
                             </button>
                             <button
                                 onClick={handleCreateRoom}
-                                className="flex-1 py-2 bg-gradient-to-r from-pink-600 to-pink-400 rounded-lg font-bold text-white hover:opacity-90 transition"
+                                disabled={isCreating}
+                                className={`flex-1 py-2 rounded-lg font-bold text-white transition 
+                                ${isCreating
+                                        ? "bg-gray-400 cursor-not-allowed"
+                                        : "bg-gradient-to-r from-pink-600 to-pink-400 hover:opacity-90"
+                                    }`}
                             >
-                                Create
+                                {isCreating ? "Creating..." : "Create"}
                             </button>
                         </div>
                     </div>
