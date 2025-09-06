@@ -4,10 +4,10 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { db } from "../firebaseconfig";
+// import { db } from "../firebaseconfig";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebaseconfig";
-import { collection, getDocs } from "firebase/firestore";
+// import { collection, getDocs } from "firebase/firestore";
 export default function TruthOrDareBackgroundPage() {
   const bottlePng = "Beerbottle.png"; // Replace with your PNG path
   const navigate = useNavigate();
@@ -23,14 +23,14 @@ export default function TruthOrDareBackgroundPage() {
 
       return () => clearTimeout(timer);
     }
-    async function getUserCount() {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      console.log("Total users:", querySnapshot.size);
-      setTotal(querySnapshot.size);
-      return querySnapshot.size;
-    }
+    // async function getUserCount() {
+    //   const querySnapshot = await getDocs(collection(db, "users"));
+    //   console.log("Total users:", querySnapshot.size);
+    //   setTotal(querySnapshot.size);
+    //   return querySnapshot.size;
+    // }
 
-    getUserCount();
+    // getUserCount();
   }, []);
 
   return (
@@ -139,7 +139,7 @@ export default function TruthOrDareBackgroundPage() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.9, delay: 0.15 }}
           >
-            {`👥 ${totalUsers}+ players online now`}
+            {`👥 ${totalUsers || 7}+ players online now`}
           </motion.div>
 
 
