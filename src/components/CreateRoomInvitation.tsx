@@ -80,6 +80,7 @@ export default function InviteToRoomPage() {
             setSelectedFriendIds(new Set());
             setSearchFriends("");
             setIsModalOpen(false);
+            navigate("/rooms");
         } catch (error) {
             console.error("Error creating room:", error);
             alert("Something went wrong. Check console for details.");

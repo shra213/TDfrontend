@@ -27,6 +27,8 @@ export default function TruthOrDareBackgroundPage() {
     //   const querySnapshot = await getDocs(collection(db, "users"));
     //   console.log("Total users:", querySnapshot.size);
     //   setTotal(querySnapshot.size);
+
+    setTotal(8);
     //   return querySnapshot.size;
     // }
 
